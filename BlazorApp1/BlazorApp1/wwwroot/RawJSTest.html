@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>RawJSTest</title>
+    <style>
+        .custom-button {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #3498db;
+            transition: background-color 0.3s ease;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+
+            .custom-button:hover {
+                background-color: #2980b9;
+            }
+    </style>
+    <script>
+        function displayLog(message) {
+            const logContainer = document.getElementById('log-container');
+            const logElement = document.createElement('p');
+            logElement.textContent = message;
+            logContainer.appendChild(logElement);
+        }
+
+        function startTest() {
+            const socket = new WebSocket('ws://localhost:18991');
+
+            socket.onopen = function (event) {
+                displayLog('websocket onopen');
+
+                socket.onmessage = async function (event) {
+                    displayLog('ReceiveData: ' + event.data);
+                    //Simulate data processing that takes a long time
+                    for (var t = Date.now(); Date.now() - t <= 6000;);
+                    displayLog('Processing completed!');
+                };
+            };
+
+            socket.onclose = function (event) {
+                displayLog('websocket onclose');
+            };
+        }
+    </script>
+</head>
+<body>
+    <div id="log-container"></div>
+    <button class="custom-button" onclick="startTest()">Start Test</button>
+</body>
+</html>
