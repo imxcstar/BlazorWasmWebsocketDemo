@@ -1,0 +1,47 @@
+﻿@page "/"
+@using System.Net.WebSockets
+@using System.Text
+
+<PageTitle>Test</PageTitle>
+
+
+<p role="status">ReceiveData: @receiveData</p>
+
+<button class="btn btn-primary" @onclick="StartTest">Start Test</button>
+
+@code {
+    private ClientWebSocket _webSocket;
+    private string receiveData = "";
+
+    private async Task StartTest()
+    {
+        _webSocket = new ClientWebSocket();
+        await _webSocket.ConnectAsync(new Uri("ws://localhost:18991"), CancellationToken.None);
+
+        // Start receiving data
+        await ReceiveData();
+    }
+
+    private async Task ReceiveData()
+    {
+        var buffer = new ArraySegment<byte>(new byte[1024]);
+        var result = await _webSocket.ReceiveAsync(buffer, CancellationToken.None);
+
+        var message = Encoding.UTF8.GetString(buffer.ToArray(), 0, result.Count);
+
+        receiveData += message + "\n";
+        StateHasChanged();
+
+        // Simulate data processing that takes a long time
+        await Task.Delay(6000);
+
+        // Attempt to receive subsequent data (which might arrive during the delay)
+        var subsequentBuffer = new ArraySegment<byte>(new byte[1024]);
+        var subsequentResult = await _webSocket.ReceiveAsync(subsequentBuffer, CancellationToken.None);
+        message = Encoding.UTF8.GetString(subsequentBuffer.ToArray(), 0, subsequentResult.Count);
+        receiveData += message + "\n";
+        StateHasChanged();
+
+        // Further processing or handling of subsequent data...
+    }
+}
