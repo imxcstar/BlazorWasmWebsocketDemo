@@ -35,7 +35,7 @@
             socket.onopen = function (event) {
                 displayLog('websocket onopen');
 
-                socket.onmessage = async function (event) {
+                socket.onmessage = function (event) {
                     displayLog('ReceiveData: ' + event.data);
                     //Simulate data processing that takes a long time
                     for (var t = Date.now(); Date.now() - t <= 6000;);
