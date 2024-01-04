@@ -50,7 +50,6 @@ class WebSocketServer
                 num++;
                 if (num >= 2)
                 {
-                    Console.WriteLine("Start disconnecting the test!");
                     break;
                 }
             }
@@ -59,6 +58,7 @@ class WebSocketServer
         finally
         {
             webSocket.Dispose();
+            Console.WriteLine($"{DateTime.Now}: Start disconnecting the test!");
         }
     }
 
